@@ -15,25 +15,25 @@ logoutButton.action = () =>
 
 ApiConnector.current((response) => {
     if (response.success) {
-        ProfileWidget.showProfile(response.id);
+        ProfileWidget.showProfile;
     }
 });
 
-function updateRates(data, response) {
-    ApiConnector.getStocks((data, response) => {
+function updateRates() {
+    ApiConnector.getStocks((response) => {
         if (response.success) {
             ratesBoard.clearTable();
-            ratesBoard.fillTable(data);
+            ratesBoard.fillTable(response.data);
         }
     });
 }
 updateRates();
 setInterval(updateRates, 60000);
 
-moneyManager.addMoneyCallback = function (data) {
-    ApiConnector.addMoney((data) => {
+moneyManager.addMoneyCallback = function (response) {
+    ApiConnector.addMoney((response) => {
         if (response.success) {
-            ProfileWidget.showProfile();
+            ProfileWidget.showProfile;
             moneyManager.setMessage('Баланс успешно пополнен!');
         } else {
             moneyManager.setMessage(response.error);
