@@ -15,7 +15,7 @@ logoutButton.action = () =>
 
 ApiConnector.current((response) => {
     if (response.success) {
-        ProfileWidget.showProfile;
+        ProfileWidget.showProfile(response.data);
     }
 });
 
@@ -33,31 +33,34 @@ setInterval(updateRates, 60000);
 moneyManager.addMoneyCallback = data => {
     ApiConnector.addMoney(data, response => {
         if (!response.success) {
-            moneyManager.setMessage(response.success, `Средства добавлены не были!`);
+            moneyManager.setMessage(response.success, response.error + " Средства добавлены не были!");
+        } else {
+            ProfileWidget.showProfile(response.data);
+            moneyManager.setMessage(response.success, `Сумма добавлена!`);
         }
-        ProfileWidget.showProfile(response.data);
-        moneyManager.setMessage(response.success, `Сумма добавлена!`);
-    })
+    });
 }
 
 moneyManager.conversionMoneyCallback = data => {
     ApiConnector.convertMoney(data, response => {
         if (!response.success) {
-            moneyManager.setMessage(response.success, `Конвертация не проведена!`);
+            moneyManager.setMessage(response.success, response.error + " Конвертация не проведена!");
+        } else {
+            ProfileWidget.showProfile(response.data);
+            moneyManager.setMessage(response.success, `Конвертация успешно проведена!`);
         }
-        ProfileWidget.showProfile(response.data);
-        moneyManager.setMessage(response.success, `Конвертация успешно проведена!`);
-    })
+    });
 }
 
 moneyManager.sendMoneyCallback = data => {
     ApiConnector.transferMoney(data, response => {
         if (!response.success) {
-            moneyManager.setMessage(response.success, `Сумма не переведена!`);
+            moneyManager.setMessage(response.success, response.error + " Сумма не переведена!");
+        } else {
+            ProfileWidget.showProfile(response.data);
+            moneyManager.setMessage(response.success, `Сумма успешно переведена!`);
         }
-        ProfileWidget.showProfile(response.data);
-        moneyManager.setMessage(response.success, `Сумма успешно переведена!`);
-    })
+    });
 }
 
 function updateFavorites(data) {
@@ -75,23 +78,25 @@ ApiConnector.getFavorites(response => {
 favoritesWidget.addUserCallback = data => {
     ApiConnector.addUserToFavorites(data, response => {
         if (response.success) {
-            updateFavorites(data);
+            updateFavorites(response.data);
             favoritesWidget.setMessage(response.success, `Пользователь добавлен!`);
             return;
+        } else {
+            favoritesWidget.setMessage(response.success, `Пользователь не добавлен!`);
+            return;
         }
-        favoritesWidget.setMessage(response.success, `Пользователь не добавлен!`);
-        return;
-    })
+    });
 }
 
 favoritesWidget.removeUserCallback = data => {
     ApiConnector.removeUserFromFavorites(data, response => {
         if (response.success) {
-            updateFavorites(data);
+            updateFavorites(response.data);
             favoritesWidget.setMessage(response.success, `Пользователь удален!`);
             return;
+        } else {
+            favoritesWidget.setMessage(response.success, `Пользователь не удален!`);
+            return;
         }
-        favoritesWidget.setMessage(response.success, `Пользователь не удален!`);
-        return;
-    })
+    });
 }
